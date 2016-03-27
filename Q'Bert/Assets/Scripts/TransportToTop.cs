@@ -2,6 +2,29 @@
 using System.Collections;
 
 public class TransportToTop : MonoBehaviour {
+
+	public float speed = 1.0F;
+	private bool _canMove = false;
+	private float startTime;
+	private float journeyLength;
+	private Vector3 _endPosition = new Vector3 (0.0f, 3.0f, 10.0f);
+	private Collision _other;
+
+	void Start() {
+		startTime = Time.time;
+		journeyLength = Vector3.Distance(this.transform.position, _endPosition);
+	}
+
+	void Update() {
+		if (_canMove) {
+			float distCovered = (Time.time - startTime) * speed;
+			float fracJourney = distCovered / journeyLength;
+			transform.position = Vector3.Lerp(this.transform.position, _endPosition, fracJourney);
+			_other.transform.position = Vector3.Lerp(this.transform.position, _endPosition, fracJourney);
+		}
+		if (transform.position == _endPosition) this.gameObject.SetActive (false);
+	}
+
 	void OnCollisionEnter(Collision collision) {
 //		Debug.Log (collision.transform.rotation.eulerAngles.y);
 //		if (collision.transform.rotation.eulerAngles.y > 314.0f && collision.transform.rotation.eulerAngles.y < 316.0f)
@@ -16,8 +39,15 @@ public class TransportToTop : MonoBehaviour {
 //		else
 //			collision.transform.rotation = Quaternion.Euler(0.0f, 135.0f, 0.0f);
 
-		this.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
-		collision.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
-		this.gameObject.SetActive (false);
+		//this.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
+		//collision.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
+
+		//float distCovered = (Time.time - startTime) * speed;
+		//float fracJourney = distCovered / journeyLength;
+		//transform.position = Vector3.Lerp(this.transform.position, endPosition, fracJourney);
+		_canMove = true;
+		_other = collision;
+
+		//this.gameObject.SetActive (false);
 	}
 }
