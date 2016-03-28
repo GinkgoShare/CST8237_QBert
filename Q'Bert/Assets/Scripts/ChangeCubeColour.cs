@@ -9,7 +9,9 @@ public class ChangeCubeColour : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision) {
 		// = new Color(0.0f, 0.0f, 1.0f);
-		if (_canChangeColour) this.GetComponent<MeshRenderer> ().material.color = new Color (0.0f, 0.0f, 1.0f);
-		else _canChangeColour = true;
+		if (collision.gameObject.CompareTag("Sheep")) {
+			if (_canChangeColour) this.GetComponent<MeshRenderer> ().material.color = new Color (0.0f, 0.0f, 1.0f);
+			else _canChangeColour = true;
+		}
 	}
 }

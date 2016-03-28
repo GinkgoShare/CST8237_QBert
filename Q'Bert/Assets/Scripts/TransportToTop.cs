@@ -4,21 +4,22 @@ using System.Collections;
 public class TransportToTop : MonoBehaviour {
 
 	public float speed = 1.0F;
-	private bool _canMove = false;
-	private float startTime;
-	private float journeyLength;
-	private Vector3 _endPosition = new Vector3 (0.0f, 3.0f, 10.0f);
+
 	private Collision _other;
+	private float _startTime;
+	private float _journeyLength;
+	private bool _canMove = false;
+	private Vector3 _endPosition = new Vector3 (0.0f, 3.0f, 10.0f);
 
 	void Start() {
-		startTime = Time.time;
-		journeyLength = Vector3.Distance(this.transform.position, _endPosition);
+		_startTime = Time.time;
+		_journeyLength = Vector3.Distance(this.transform.position, _endPosition);
 	}
 
 	void Update() {
 		if (_canMove) {
-			float distCovered = (Time.time - startTime) * speed;
-			float fracJourney = distCovered / journeyLength;
+			float distCovered = (Time.time - _startTime) * speed;
+			float fracJourney = distCovered / _journeyLength;
 			transform.position = Vector3.Lerp(this.transform.position, _endPosition, fracJourney);
 			_other.transform.position = Vector3.Lerp(this.transform.position, _endPosition, fracJourney);
 		}
