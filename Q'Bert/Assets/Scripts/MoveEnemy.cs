@@ -41,6 +41,7 @@ public class MoveEnemy : MonoBehaviour {
 		} else if (collision.gameObject.CompareTag ("Sheep")) {
 			collision.gameObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
 			collision.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
+			collision.transform.rotation = Quaternion.Euler(new Vector3(0.0f, 225.0f, 0.0f));
 		}
 	}
 }
