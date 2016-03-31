@@ -5,13 +5,18 @@ public class PlayerMovement : MonoBehaviour {
 
 	public float speed = 1.0f;
 
-	public AudioSource jumpSound;
+	public GameObject lifeAvatar1;
+	public GameObject lifeAvatar2;
+	public GameObject lifeAvatar3;
+
 	public AudioSource dieSound;
+	public AudioSource jumpSound;
 	public AudioSource fallingSound;
 
 	private bool _canMove = true;
 	private bool _isFalling = false;
 	private float _startingYPos;
+	private int _lives = 3;
 
 	void Start() {
 		this.gameObject.GetComponent<Rigidbody> ().freezeRotation = true;
@@ -64,9 +69,25 @@ public class PlayerMovement : MonoBehaviour {
 			_canMove = true;
 		} else if (collision.gameObject.CompareTag ("Jelly")) {
 			dieSound.Play ();
-			this.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
-			this.gameObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
-			this.transform.rotation = Quaternion.Euler(new Vector3(0.0f, 225.0f, 0.0f));
+			if (_lives > 0) {
+				this.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
+				this.gameObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
+				this.transform.rotation = Quaternion.Euler (new Vector3 (0.0f, 225.0f, 0.0f));
+			}
+			switch (_lives--) {
+			case 1:
+				lifeAvatar1.SetActive (false);
+				break;
+			case 2:
+				lifeAvatar2.SetActive (false);
+				break;
+			case 3:
+				lifeAvatar3.SetActive (false);
+				break;
+			default:
+				Time.timeScale = 0.0f;
+				break;
+			}
 		}
 	}
 }
