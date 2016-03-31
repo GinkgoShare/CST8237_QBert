@@ -27,15 +27,20 @@ public class MoveEnemy : MonoBehaviour {
 	}
 
 	void OnCollisionEnter(Collision collision) {
-		int coinFlip = (int)Random.Range (1, 3);
-		if (1 == coinFlip) {
-			this.transform.rotation = Quaternion.Euler (0.0f, 225.0f, 0.0f);
-			this.transform.Translate (new Vector3 (0.0f, 1.0f, 1.0f));
-			//ApplyDownwardForce ();
-		} else {
-			this.transform.rotation = Quaternion.Euler (0.0f, 135.0f, 0.0f);
-			this.transform.Translate (new Vector3 (0.0f, 1.0f, 1.0f));
-			//ApplyDownwardForce ();
+		if (collision.gameObject.CompareTag ("Top Panel")) {
+			int coinFlip = (int)Random.Range (1, 3);
+			if (1 == coinFlip) {
+				this.transform.rotation = Quaternion.Euler (0.0f, 225.0f, 0.0f);
+				this.transform.Translate (new Vector3 (0.0f, 1.0f, 1.0f));
+				//ApplyDownwardForce ();
+			} else {
+				this.transform.rotation = Quaternion.Euler (0.0f, 135.0f, 0.0f);
+				this.transform.Translate (new Vector3 (0.0f, 1.0f, 1.0f));
+				//ApplyDownwardForce ();
+			}
+		} else if (collision.gameObject.CompareTag ("Sheep")) {
+			collision.gameObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
+			collision.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
 		}
 	}
 }
