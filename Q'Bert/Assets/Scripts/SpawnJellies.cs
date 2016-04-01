@@ -10,8 +10,16 @@ public class SpawnJellies : MonoBehaviour {
 	public GameObject purpleJelly;
 
 	private float _timer;
+	private GameObject sheep;
 
 	void Start() {
+		sheep = GameObject.FindGameObjectWithTag("Sheep");
+		Init ();
+	}
+
+	public void Init() {
+		if (delay > 2)
+			delay -= sheep.GetComponent<PlayerMovement> ().GetLevel ();
 		_timer = Time.time + delay;
 	}
 
@@ -30,7 +38,7 @@ public class SpawnJellies : MonoBehaviour {
 				Instantiate(purpleJelly, new Vector3((chooseSide == 1 ? -0.7f : 0.7f), 4.0f, 9.3f), Quaternion.Euler(new Vector3(0.0f, (chooseSide == 1 ? 135.0f : 225.0f), 0.0f)));
 				break;
 			}
-			_timer = Time.time + delay; 
+			Init ();
 		}
 	}
 }

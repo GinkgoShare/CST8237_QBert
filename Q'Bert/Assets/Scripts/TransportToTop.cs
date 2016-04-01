@@ -25,7 +25,7 @@ public class TransportToTop : MonoBehaviour {
 			transform.position = Vector3.Lerp(this.transform.position, _endPosition, fracJourney);
 			_other.transform.position = Vector3.Lerp(this.transform.position, _endPosition, fracJourney);
 		}
-		if (transform.position == _endPosition) this.gameObject.SetActive (false);
+		if (transform.position == _endPosition && !transportSound.isPlaying) this.gameObject.SetActive (false);
 	}
 
 	void OnCollisionEnter(Collision collision) {

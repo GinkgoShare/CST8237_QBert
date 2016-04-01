@@ -1,22 +1,48 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class ChangeCubeColour : MonoBehaviour {
 
-	//public Material materialToChange;
+	private bool _hasChangedColor;
+	private static int _landedCount;
+	private static bool _canChangeColour;
 
-	private bool _hasChangedColor = false;
+	void Start() {
+		Init ();
+	}
 
-	private static bool _canChangeColour = false;
+	public void Init() {
+		_landedCount = 0;
+		_hasChangedColor = false;
+		_canChangeColour = false;
+	}
 
-	void OnCollisionEnter(Collision collision) {
-		if (collision.gameObject.CompareTag("Sheep") && !_hasChangedColor) {
-			if (_canChangeColour) {
-				_hasChangedColor = true;
-				this.GetComponent<MeshRenderer> ().material.color = new Color (0.0f, 0.0f, 1.0f);
-			} else {
-				_canChangeColour = true;
-			}
-		}
+	public bool HasChangedColour() {
+		return _hasChangedColor;
+	}
+
+	public void SetHasChangedColour(bool hasChangedColour) {
+		_hasChangedColor = hasChangedColour;
+	}
+
+	public bool CanChangeColour() {
+		return _canChangeColour;
+	}
+
+	public void SetCanChangeColour(bool canChangeColour) {
+		_canChangeColour = canChangeColour;
+	}
+
+	public int GetLandedCount() {
+		return _landedCount;
+	}
+
+	public void SetLandedCount(int landedCount) {
+		_landedCount = landedCount;
+	} 
+
+	public void ChangeMaterial(Material material) {
+		this.GetComponent<MeshRenderer> ().material = material;
 	}
 }
