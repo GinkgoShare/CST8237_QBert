@@ -18,9 +18,11 @@ public class PlayerMovement : MonoBehaviour {
 	public Material cube1;
 	public Material cube2;
 	public Material cube3;
+	public Material cube4;
 	public Material panel1;
 	public Material panel2;
 	public Material panel3;
+	public Material panel4;
 
 	public AudioSource winSound;
 	public AudioSource dieSound;
@@ -39,6 +41,7 @@ public class PlayerMovement : MonoBehaviour {
 	private float _normalTimeScale;
 	private GameObject[] _cubes;
 	private GameObject[] _cubePanels;
+	private List<GameObject> _transporters;
 	private bool _isGameOver;
 
 	void Start() {
@@ -46,6 +49,9 @@ public class PlayerMovement : MonoBehaviour {
 		this.gameObject.GetComponent<Rigidbody> ().freezeRotation = true;
 		_cubes = GameObject.FindGameObjectsWithTag("Cube");
 		_cubePanels = GameObject.FindGameObjectsWithTag("Top Panel");
+		_transporters = new List<GameObject>(2);
+		_transporters.Add(GameObject.FindGameObjectWithTag("Trans1"));
+		_transporters.Add(GameObject.FindGameObjectWithTag("Trans2"));
 		InitGame ();
 	}
 
@@ -66,13 +72,20 @@ public class PlayerMovement : MonoBehaviour {
 	void InitNewLevel() {
 		_hasBeatLevel = false;
 		levelText.text = "Level " + _level;
+		foreach (var transporter in _transporters) {
+			transporter.GetComponent<TransportToTop> ().Init();
+		}
+		Time.timeScale = _normalTimeScale;
+		this.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
+		this.gameObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
+		this.transform.rotation = Quaternion.Euler (new Vector3 (0.0f, 225.0f, 0.0f));
 		switch (_level % 3) {
 		case 0:
 			foreach (var cube in _cubes) {
-				cube.GetComponent<MeshRenderer> ().material = cube3;
+				cube.GetComponent<MeshRenderer> ().material = cube4;
 			}
 			foreach (var panel in _cubePanels) {
-				panel.GetComponent<MeshRenderer> ().material = panel3;
+				panel.GetComponent<MeshRenderer> ().material = panel4;
 				panel.GetComponent<ChangeCubeColour> ().SetLandedCount (0);
 				panel.GetComponent<ChangeCubeColour> ().SetHasChangedColour (false);
 				panel.GetComponent<ChangeCubeColour> ().SetCanChangeColour (false);
@@ -100,11 +113,18 @@ public class PlayerMovement : MonoBehaviour {
 				panel.GetComponent<ChangeCubeColour> ().SetCanChangeColour (false);
 			}
 			break;
+		case 3:
+			foreach (var cube in _cubes) {
+				cube.GetComponent<MeshRenderer> ().material = cube3;
+			}
+			foreach (var panel in _cubePanels) {
+				panel.GetComponent<MeshRenderer> ().material = panel3;
+				panel.GetComponent<ChangeCubeColour> ().SetLandedCount (0);
+				panel.GetComponent<ChangeCubeColour> ().SetHasChangedColour (false);
+				panel.GetComponent<ChangeCubeColour> ().SetCanChangeColour (false);
+			}
+			break;
 		}
-		Time.timeScale = _normalTimeScale;
-		this.transform.position = new Vector3 (0.0f, 3.0f, 10.0f);
-		this.gameObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
-		this.transform.rotation = Quaternion.Euler (new Vector3 (0.0f, 225.0f, 0.0f));
 	}
 
 	void Update() {
@@ -115,8 +135,7 @@ public class PlayerMovement : MonoBehaviour {
 			_isFalling = true;
 			fallingSound.Play ();
 		}
-		//Debug.Log (string.Format ("Wait Time: {0}, Current Time: {1}, Art: {2}", _waitForNextLevel, Time.time, (Time.time - 5.0f)));
-		if (_hasBeatLevel) {
+		if (_hasBeatLevel && !winSound.isPlaying) {
 			_level++;
 			InitNewLevel ();
 		}
@@ -166,8 +185,8 @@ public class PlayerMovement : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision) {
 		if (collision.gameObject.CompareTag ("Top Panel")) {
-			_isFalling = false;
 			_canMove = true;
+			_isFalling = false;
 			if (!(collision.gameObject.GetComponent<ChangeCubeColour>().HasChangedColour())) {
 				if (collision.gameObject.GetComponent<ChangeCubeColour>().CanChangeColour()) {
 					collision.gameObject.GetComponent<ChangeCubeColour> ().SetHasChangedColour (true);
@@ -182,10 +201,14 @@ public class PlayerMovement : MonoBehaviour {
 					case 2:
 						collision.gameObject.GetComponent<ChangeCubeColour> ().ChangeMaterial(panel3);
 						break;
+					case 3:
+						collision.gameObject.GetComponent<ChangeCubeColour> ().ChangeMaterial(panel4);
+						break;
 					}
 					collision.gameObject.GetComponent<ChangeCubeColour> ().SetLandedCount (
 						collision.gameObject.GetComponent<ChangeCubeColour> ().GetLandedCount() + 1); // increment landed cube count
-					
+
+					// Check if level is beat
 					if (collision.gameObject.GetComponent<ChangeCubeColour> ().GetLandedCount() == 28) { // total number of cubes
 						_waitForNextLevel = Time.time;
 						Time.timeScale = 0.0f;
