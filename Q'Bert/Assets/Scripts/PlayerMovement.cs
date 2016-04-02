@@ -214,6 +214,7 @@ public class PlayerMovement : MonoBehaviour {
 						Time.timeScale = 0.0f;
 						winSound.Play ();
 						_hasBeatLevel = true;
+						scoreText.text = string.Format("{0:000000}", (int.Parse (scoreText.text) + 1000));
 					}
 				} else {
 					collision.gameObject.GetComponent<ChangeCubeColour> ().SetCanChangeColour(true);
