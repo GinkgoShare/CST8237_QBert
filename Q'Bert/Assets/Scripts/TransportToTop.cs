@@ -4,6 +4,7 @@ using System.Collections;
 public class TransportToTop : MonoBehaviour {
 
 	public float speed;
+	public float movementTime = 1.0f;
 	public AudioSource transportSound;
 
 	private Collision _other;
@@ -13,6 +14,7 @@ public class TransportToTop : MonoBehaviour {
 	private bool _canMove;
 	private bool _isFirstCollision;
 	private Vector3 _endPosition;
+	private float _elapsedTime = 0.0f;
 
 	void Start() {
 		if (this.gameObject.tag == "Trans1") {
@@ -36,10 +38,12 @@ public class TransportToTop : MonoBehaviour {
 
 	void Update() {
 		if (_canMove) {
-			float distCovered = (Time.time - _startTime) * speed;
-			float fracJourney = distCovered / _journeyLength;
-			transform.position = Vector3.Lerp(this.transform.position, _endPosition, fracJourney);
-			_other.transform.position = Vector3.Lerp(this.transform.position, _endPosition, fracJourney);
+			//float distCovered = (Time.time - _startTime) * speed;
+			//float fracJourney = distCovered / _journeyLength;
+			_elapsedTime += Time.deltaTime * speed; 
+			float currentProgress = _elapsedTime / movementTime;
+			transform.position = Vector3.Lerp(this.transform.position, _endPosition, currentProgress);
+			_other.transform.position = Vector3.Lerp(this.transform.position, _endPosition, currentProgress);
 		}
 		if (transform.position == _endPosition && !transportSound.isPlaying) {
 			_canMove = false;
